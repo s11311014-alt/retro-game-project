@@ -102,6 +102,10 @@ export class InputHandler {
                 this._triggerAction();
             });
         }
+
+        window.addEventListener('pointerdown', () => {
+            this._triggerGesture();
+        }, { passive: true });
     }
 
     isSteerLeft() {

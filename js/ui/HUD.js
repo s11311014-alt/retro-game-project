@@ -54,8 +54,8 @@ export class HUD {
         ctx.fillText(`DRIFT: ${Math.floor(driftScore)}`, 22, 50);
 
         // 音樂/音效狀態徽章 (MUTE)
-        const soundLabel = isMuted ? '🔇 [M] MUTE' : '🔊 [M] SOUND';
-        ctx.fillStyle = isMuted ? '#888888' : '#66fcf1';
+        const soundLabel = isMuted ? '🔇 [M] 靜音中 (按M開聲)' : '🔊 [M] SOUND: ON';
+        ctx.fillStyle = isMuted ? '#ff2e63' : '#66fcf1';
         ctx.font = 'bold 11px "Courier New", monospace';
         ctx.textAlign = 'center';
         ctx.fillText(soundLabel, CANVAS_WIDTH / 2, 40);

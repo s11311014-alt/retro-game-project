@@ -67,10 +67,10 @@ export const STORAGE_KEY = Object.freeze({
 });
 
 export const AUDIO_CONFIG = Object.freeze({
-    MASTER_VOLUME: 0.65,
-    BGM_VOLUME: 0.3,
-    SFX_VOLUME: 0.55,
-    ENGINE_VOLUME: 0.22,
-    ENGINE_MIN_FREQ: 45,
-    ENGINE_MAX_FREQ: 150
+    MASTER_VOLUME: 0.85,
+    BGM_VOLUME: 0.55,
+    SFX_VOLUME: 0.75,
+    ENGINE_VOLUME: 0.35,
+    ENGINE_MIN_FREQ: 50,
+    ENGINE_MAX_FREQ: 155
 });
