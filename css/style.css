@@ -44,3 +44,13 @@ canvas {
     color: #66fcf1;
     font-weight: bold;
 }
+
+.author-tag {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #66fcf1;
+    text-shadow: 0 0 10px rgba(102, 252, 241, 0.7);
+    text-align: right;
+    letter-spacing: 1.5px;
+}
