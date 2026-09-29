@@ -19,6 +19,7 @@ import { EnemyManager } from '../entities/EnemyManager.js';
 import { RoadSystem } from '../systems/RoadSystem.js';
 import { ParticleSystem } from '../systems/ParticleSystem.js';
 import { Physics } from '../systems/Physics.js';
+import { SoundSystem } from '../systems/SoundSystem.js';
 import { HUD } from '../ui/HUD.js';
 
 export class Game {
@@ -29,6 +30,7 @@ export class Game {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
 
+        this.soundSystem = new SoundSystem();
         this.input = new InputHandler(canvas);
         this.player = new Player();
         this.enemyManager = new EnemyManager();
@@ -49,10 +51,23 @@ export class Game {
     }
 
     _setupInput() {
+        // 首次按鍵或點擊解鎖 Web Audio 聲音引擎
+        this.input.onUserGesture(() => {
+            this.soundSystem.initContext();
+        });
+
+        // 按 M 鍵切換靜音
+        this.input.onMute(() => {
+            this.soundSystem.toggleMute();
+        });
+
         this.input.onAction(() => {
             if (this.currentState === GAME_STATE.START || this.currentState === GAME_STATE.GAMEOVER) {
                 this.init();
                 this.currentState = GAME_STATE.PLAYING;
+                this.soundSystem.playStart();
+                this.soundSystem.startEngine();
+                this.soundSystem.startBGM();
             }
         });
     }
@@ -130,20 +145,32 @@ export class Game {
             // 產生兩側排氣煙霧
             this.particleSystem.addSmoke(this.player.x + 4, this.player.y + 45, this.speed);
             this.particleSystem.addSmoke(this.player.x + this.player.width - 4, this.player.y + 45, this.speed);
+
+            this.soundSystem.startDrift();
+        } else {
+            this.soundSystem.stopDrift();
         }
 
-        // 6. 更新粒子與胎痕
+        // 6. 即時動態引擎音調調節
+        this.soundSystem.updateEngine(this.speed);
+
+        // 7. 更新粒子與胎痕
         this.particleSystem.update(this.speed, dtRatio);
 
-        // 7. 限制玩家於賽道範圍內
+        // 8. 限制玩家於賽道範圍內
         Physics.clampPlayerToRoad(this.player, this.roadSystem.trackCurve);
 
-        // 8. 更新敵車集群（防重疊生成、推進、防追撞調控）
+        // 9. 更新敵車集群（防重疊生成、推進、防追撞調控）
         this.enemyManager.update(this.speed, this.roadSystem.trackCurve, dtRatio);
 
-        // 9. 精確碰撞檢查
+        // 10. 精確碰撞檢查與音效觸發
         if (this.enemyManager.checkCollisionWith(this.player)) {
             this.currentState = GAME_STATE.GAMEOVER;
+            this.soundSystem.stopEngine();
+            this.soundSystem.stopDrift();
+            this.soundSystem.stopBGM();
+            this.soundSystem.playCrash();
+
             if (this.score > this.highScore) {
                 this.highScore = Math.floor(this.score);
                 localStorage.setItem(STORAGE_KEY.HIGH_SCORE, this.highScore.toString());

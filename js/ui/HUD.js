@@ -19,11 +19,15 @@ export class HUD {
         ctx.fillStyle = '#66fcf1';
         ctx.font = 'bold 32px "Courier New", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(title, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 20);
+        ctx.fillText(title, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 25);
 
         ctx.fillStyle = '#c5c6c7';
         ctx.font = '15px "Segoe UI", sans-serif';
-        ctx.fillText(subtitle, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
+        ctx.fillText(subtitle, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 25);
+
+        ctx.fillStyle = '#888888';
+        ctx.font = '12px "Courier New", monospace';
+        ctx.fillText('[M] 鍵隨時開啟 / 關閉音樂音效', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 55);
     }
 
     /**
@@ -31,7 +35,7 @@ export class HUD {
      * @param {CanvasRenderingContext2D} ctx 
      * @param {object} stateData 
      */
-    static renderDashboard(ctx, { score, driftScore, highScore, trackCurve, currentCurveName }) {
+    static renderDashboard(ctx, { score, driftScore, highScore, trackCurve, currentCurveName, isMuted }) {
         // 半透明背景框
         ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
         ctx.fillRect(10, 10, CANVAS_WIDTH - 20, 50);
@@ -48,6 +52,13 @@ export class HUD {
         // 甩尾得分 (DRIFT)
         ctx.fillStyle = '#ff2e63';
         ctx.fillText(`DRIFT: ${Math.floor(driftScore)}`, 22, 50);
+
+        // 音樂/音效狀態徽章 (MUTE)
+        const soundLabel = isMuted ? '🔇 [M] MUTE' : '🔊 [M] SOUND';
+        ctx.fillStyle = isMuted ? '#888888' : '#66fcf1';
+        ctx.font = 'bold 11px "Courier New", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(soundLabel, CANVAS_WIDTH / 2, 40);
 
         // 歷史最高分 (HI)
         ctx.fillStyle = '#f9ed69';
@@ -83,7 +94,8 @@ export class HUD {
             driftScore: game.driftScore,
             highScore: game.highScore,
             trackCurve: game.roadSystem.trackCurve,
-            currentCurveName: game.roadSystem.currentCurveName
+            currentCurveName: game.roadSystem.currentCurveName,
+            isMuted: game.soundSystem ? game.soundSystem.isMuted : false
         });
 
         if (game.player.isDrifting) {

@@ -23,6 +23,8 @@ export class InputHandler {
         };
 
         this.actionCallbacks = [];
+        this.muteCallbacks = [];
+        this.gestureCallbacks = [];
 
         this._initListeners();
     }
@@ -35,14 +37,44 @@ export class InputHandler {
         this.actionCallbacks.push(callback);
     }
 
+    /**
+     * 註冊靜音切換回呼（按 M 鍵）
+     * @param {() => void} callback 
+     */
+    onMute(callback) {
+        this.muteCallbacks.push(callback);
+    }
+
+    /**
+     * 註冊首次使用者互動回呼（用於解鎖 Web Audio）
+     * @param {() => void} callback 
+     */
+    onUserGesture(callback) {
+        this.gestureCallbacks.push(callback);
+    }
+
     _triggerAction() {
         for (let i = 0; i < this.actionCallbacks.length; i++) {
             this.actionCallbacks[i]();
         }
     }
 
+    _triggerMute() {
+        for (let i = 0; i < this.muteCallbacks.length; i++) {
+            this.muteCallbacks[i]();
+        }
+    }
+
+    _triggerGesture() {
+        for (let i = 0; i < this.gestureCallbacks.length; i++) {
+            this.gestureCallbacks[i]();
+        }
+    }
+
     _initListeners() {
         window.addEventListener('keydown', (e) => {
+            this._triggerGesture();
+
             if (e.key in this.keys || e.key.toLowerCase() in this.keys) {
                 this.keys[e.key] = true;
                 this.keys[e.key.toLowerCase()] = true;
@@ -50,6 +82,10 @@ export class InputHandler {
 
             if (e.code === 'Space') {
                 this._triggerAction();
+            }
+
+            if (e.key === 'm' || e.key === 'M') {
+                this._triggerMute();
             }
         });
 
@@ -62,6 +98,7 @@ export class InputHandler {
 
         if (this.canvas) {
             this.canvas.addEventListener('click', () => {
+                this._triggerGesture();
                 this._triggerAction();
             });
         }

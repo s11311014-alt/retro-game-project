@@ -62,5 +62,15 @@ export const ENEMY_CONFIG = Object.freeze({
 });
 
 export const STORAGE_KEY = Object.freeze({
-    HIGH_SCORE: 'micro_racing_v5_hi'
+    HIGH_SCORE: 'micro_racing_v5_hi',
+    AUDIO_MUTED: 'micro_racing_audio_muted'
+});
+
+export const AUDIO_CONFIG = Object.freeze({
+    MASTER_VOLUME: 0.65,
+    BGM_VOLUME: 0.3,
+    SFX_VOLUME: 0.55,
+    ENGINE_VOLUME: 0.22,
+    ENGINE_MIN_FREQ: 45,
+    ENGINE_MAX_FREQ: 150
 });
